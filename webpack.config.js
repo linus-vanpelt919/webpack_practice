@@ -2,7 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //cssをファイルに出力するためのもの
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //htmlを出力するためのもの
 const { CleanWebpackPlugin } = require('clean-webpack-plugin'); //distの中の不用なファイルの削除
-
+const { loader } = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: './src/js/main.js',
@@ -11,7 +11,8 @@ module.exports = {
         filename: 'js/main.js',
     },
     module: {
-        rules: [{
+        rules: [
+         {
             test: /\.css/,
             use: [//ローダーは下から適用される
                 {
@@ -20,8 +21,21 @@ module.exports = {
                 {
                   loader: 'css-loader',
                 },
+             ]
+         },
+         {
+            test: /\.(jpe?g|png|svg|gif)$/i,
+            use: [
+                {
+                loader: 'file-loader',
+                options: {
+                    esModule: false,
+                    name: '[path][name].[ext]',
+                }
+                },
             ]
-        }]
+         }
+    ]
     },
     plugins: [
         new MiniCssExtractPlugin({
