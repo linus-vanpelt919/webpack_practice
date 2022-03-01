@@ -1,10 +1,16 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //cssをファイルに出力するためのもの
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //htmlを出力するためのもの
-const { CleanWebpackPlugin } = require('clean-webpack-plugin'); //distの中の不用なファイルの削除
-const { loader } = require('mini-css-extract-plugin');
+const {
+    CleanWebpackPlugin
+} = require('clean-webpack-plugin'); //distの中の不用なファイルの削除
+const {
+    loader
+} = require('mini-css-extract-plugin');
 
 module.exports = {
+    mode: 'development',//production
+    devtool: 'source-map',
     entry: './src/js/main.js',
     output: {
         path: path.resolve(__dirname, './dist'),
@@ -12,49 +18,75 @@ module.exports = {
     },
     devServer: {
         open: true,
-      },
+    },
     module: {
         rules: [
-            {
+            {//js
+                test: /\.js$/,
+                exclude: /node_modules/, //node_modulesは除外する
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            ['@babel/preset-env', {
+                                targets: ' > .25%, not dead'
+                            }],
+                        ],
+                    }
+                }]
+            },
+            {//css
                 test: /\.(css|scss|sass)$/,
-                use: [
-                  {
-                    loader: MiniCssExtractPlugin.loader,
-                  },
-                  {
-                    loader: 'css-loader',
-                  },
-                //   {
-                //     loader: 'postcss-loader',
-                //     options: {
-                //       postcssOptions: {
-                //         plugins: [
-                //           [
-                //             "autoprefixer",
-                //           ],
-                //         ],
-                //       },
-                //     },
-                //   },
-                  {
-                    loader: 'sass-loader',
-                  },
+                use: [{
+                        loader: MiniCssExtractPlugin.loader,
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            sourceMap: false,
+                        },
+                    },
+                    //   {
+                    //     loader: 'postcss-loader',
+                    //     options: {
+                    //       postcssOptions: {
+                    //         plugins: [
+                    //           [
+                    //             "autoprefixer",
+                    //           ],
+                    //         ],
+                    //       },
+                    //     },
+                    //   },
+                    {
+                        loader: 'sass-loader',
+                    },
                 ],
             },
-            {
+            {//img
                 test: /\.(jpe?g|png|svg|gif)$/i,
-                use: [//画像
+                use: [ //画像
                     {
-                    loader: 'file-loader',
-                    options: {
-                        esModule: false,
-                        name: 'images/[name].[ext]',
-                    }
-                }, ]
+                        loader: 'file-loader',
+                        options: {
+                            esModule: false,
+                            name: 'images/[name].[ext]',
+                        }
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            mozjpeg: {
+                                progressive: true,
+                                quality: 80,
+                            }
+                        }
+                    },
+                ]
             },
-            {
+            {//テンプレートエンジン
                 test: /\.pug/,
-                use: [//テンプレートエンジン
+                use: [
                     {
                         loader: 'html-loader',
                     },
