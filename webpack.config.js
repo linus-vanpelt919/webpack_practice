@@ -22,7 +22,7 @@ module.exports = {
     module: {
         rules: [
             {//js
-                test: /\.js$/,
+                test: /\.js/,
                 exclude: /node_modules/, //node_modulesは除外する
                 use: [{
                     loader: 'babel-loader',
@@ -31,6 +31,7 @@ module.exports = {
                             ['@babel/preset-env', {
                                 targets: ' > .25%, not dead'
                             }],
+                            '@babel/preset-react',
                         ],
                     }
                 }]
