@@ -19,7 +19,17 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.vue/,
+                test:  /\.(ts|tsx)/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: { appendTsSuffixTo: [/\.vue$/] },
+                    },
+                ]
+            },
+            {
+                test: /\.vue$/,
                 exclude: /node_modules/, //node_modulesは除外する
                 use: [
                     {
@@ -28,7 +38,7 @@ module.exports = {
                 ]
             },
             {//js
-                test: /\.js/,
+                test: /\.(js|jsx)/,
                 exclude: /node_modules/, //node_modulesは除外する
                 use: [{
                     loader: 'babel-loader',

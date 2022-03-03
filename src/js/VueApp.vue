@@ -3,7 +3,7 @@
 </template>
 
 <script>
-export default {
+export default  {
   data: () => {
     console.log("vue.js");
     return {
