@@ -1,12 +1,9 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //cssをファイルに出力するためのもの
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //htmlを出力するためのもの
-const {
-    CleanWebpackPlugin
-} = require('clean-webpack-plugin'); //distの中の不用なファイルの削除
-const {
-    loader
-} = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin'); //distの中の不用なファイルの削除
+const { loader } = require('mini-css-extract-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     mode: 'development',//production
@@ -21,6 +18,15 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.vue/,
+                exclude: /node_modules/, //node_modulesは除外する
+                use: [
+                    {
+                        loader: 'vue-loader',
+                    },
+                ]
+            },
             {//js
                 test: /\.js/,
                 exclude: /node_modules/, //node_modulesは除外する
@@ -102,6 +108,7 @@ module.exports = {
         ]
     },
     plugins: [
+        new VueLoaderPlugin(),
         new MiniCssExtractPlugin({
             filename: './css/main.css',
         }),
