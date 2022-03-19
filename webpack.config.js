@@ -1,43 +1,44 @@
-const path = require('path');
+const path = require('path'); //絶対パス
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //cssをファイルに出力するためのもの
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //htmlを出力するためのもの
-const { CleanWebpackPlugin } = require('clean-webpack-plugin'); //distの中の不用なファイルの削除
-const { loader } = require('mini-css-extract-plugin');
+const {
+    CleanWebpackPlugin
+} = require('clean-webpack-plugin'); //distの中の不用なファイルの削除
+const {
+    loader
+} = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-    mode: 'development',//production
-    devtool: 'source-map',
-    entry: './src/js/main.js',
-    output: {
+    mode: 'development', //production
+    devtool: 'source-map', //none
+    entry: './src/js/main.js', //すべてのファイルの基準となる エントリーポイント
+    output: { //出力先
         path: path.resolve(__dirname, './dist'),
-        filename: 'js/main.js',
+        filename: 'js/[name]-[hash].js',
     },
     devServer: {
         open: true,
     },
     module: {
-        rules: [
-            {
-                test:  /\.(ts|tsx)/,
+        rules: [{
+                test: /\.(ts|tsx)/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                        options: { appendTsSuffixTo: [/\.vue$/] },
+                use: [{
+                    loader: 'ts-loader',
+                    options: {
+                        appendTsSuffixTo: [/\.vue$/]
                     },
-                ]
+                }, ]
             },
             {
                 test: /\.vue$/,
                 exclude: /node_modules/, //node_modulesは除外する
-                use: [
-                    {
-                        loader: 'vue-loader',
-                    },
-                ]
+                use: [{
+                    loader: 'vue-loader',
+                }, ]
             },
-            {//js
+            { //js
                 test: /\.(js|jsx)/,
                 exclude: /node_modules/, //node_modulesは除外する
                 use: [{
@@ -52,10 +53,13 @@ module.exports = {
                     }
                 }]
             },
-            {//css
-                test: /\.(css|scss|sass)$/,
+            { //css
+                test: /\.(css|scss|sass)$/, // $ 終端 \.は.をエスケープしてあげる
                 use: [{
                         loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            esModule: false,
+                        },
                     },
                     {
                         loader: 'css-loader',
@@ -63,24 +67,24 @@ module.exports = {
                             sourceMap: false,
                         },
                     },
-                    //   {
+                    // {
                     //     loader: 'postcss-loader',
                     //     options: {
-                    //       postcssOptions: {
-                    //         plugins: [
-                    //           [
-                    //             "autoprefixer",
-                    //           ],
-                    //         ],
-                    //       },
+                    //         postcssOptions: {
+                    //             plugins: [
+                    //                 [
+                    //                     "autoprefixer",
+                    //                 ],
+                    //             ],
+                    //         },
                     //     },
-                    //   },
+                    // },
                     {
                         loader: 'sass-loader',
                     },
                 ],
             },
-            {//img
+            { //img
                 test: /\.(jpe?g|png|svg|gif)$/i,
                 use: [ //画像
                     {
@@ -101,10 +105,9 @@ module.exports = {
                     },
                 ]
             },
-            {//テンプレートエンジン
+            { //テンプレートエンジン
                 test: /\.pug/,
-                use: [
-                    {
+                use: [{
                         loader: 'html-loader',
                     },
                     {
@@ -116,6 +119,14 @@ module.exports = {
                 ]
             }
         ]
+    },
+    // import 文で .ts ファイルを解決するため
+    resolve: { //拡張子の省略
+        // Webpackで利用するときの設定
+        alias: {
+            vue$: "vue/dist/vue.esm.js",
+        },
+        extensions: ["*", ".js", ".vue", ".json"],
     },
     plugins: [
         new VueLoaderPlugin(),
